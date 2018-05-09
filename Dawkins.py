@@ -12,17 +12,19 @@ class Worker(object):
         
         z1 = tf.matmul(self.X_, self.w_)
         probs = tf.nn.softmax(z1)
-        predictions = tf.argmax(probs, 1)
-        correct_prediction = tf.equal(predictions, tf.argmax(self.y_, 1))
+        self.predictions = tf.argmax(probs, 1)
+        correct_prediction = tf.equal(self.predictions, tf.argmax(self.y_, 1))
         self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
         
     def run(self, X, y, w):
         """
-        for a given set of <X,y> pair and weights, calculate 
-        accuracy. in this example, the fitness score is 
-        accuracy.
+        for a given set of <X,y> pair and parameters w, calculate
+        fitness. this example uses accuracy as a proxy for fitness.
         """
         return self.sess.run(self.accuracy, feed_dict={self.X_:X, self.y_:y, self.w_:w})
+
+    def predict(self, X, y, w):
+    	return self.sess.run(self.predictions, feed_dict={self.X_:X, self.y_:y, self.w_:w})
     
 class Dawkins(object):
     """
@@ -80,7 +82,7 @@ class Dawkins(object):
                     print(generation, np.mean(R))
 
                 # update global parameter vector after each generation
-                A = (R - np.mean(R)) / np.std(R + 1e-6)
+                A = (R - np.mean(R)) / (np.std(R) + 1e-6)
 
                 # reshape to rank 2 matrix, such that rows=individuals, cols=genotypes
                 M = N.reshape(self.n_pop, self.n_features * self.n_classes)
@@ -94,5 +96,4 @@ class Dawkins(object):
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
             individual = Worker(sess, self.n_features, self.n_classes)
-            res = individual.run(X, y, self.coef_)
-            print("using evolved weights, accuracy/fitness: ", res)
+            return individual.predict(X, y, self.coef_)
