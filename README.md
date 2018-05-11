@@ -1,13 +1,11 @@
 # dawkins
-apply evolution strategies to classification problems.
+apply evolution strategies to supervised, classification tasks. at every iteration (“generation”), a population of parameter vectors (“genotypes”) is perturbed (“mutated”) and their objective function value (“fitness”) is evaluated.
 
 ## why evolution strategies (es)?
-es is an optimization technique that learns parameters without backpropagation.
+es is an optimization technique that learns parameters without backpropagation. no gradients are computed - why do things the easy way when you can do it the hard way?
 
 ## example
 if you know scikit, you know the drill.
-
-
 ```python
 # iris dataset
 iris = learn.datasets.load_dataset('iris')
